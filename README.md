@@ -42,7 +42,7 @@ A comprehensive exam management system built with Django and MySQL, featuring st
    
    Make sure MySQL is running and accessible with the credentials:
    - User: `root`
-   - Password: `dharsh@457`
+   - Password: database password 
    - Host: `localhost`
    - Port: `3306`
 
@@ -149,7 +149,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'examdb',
         'USER': 'root',
-        'PASSWORD': 'dharsh@457',
+        'PASSWORD': 'database password',
         'HOST': 'localhost',
         'PORT': '3306',
     }
