@@ -8,7 +8,7 @@ from django.utils import timezone
 from datetime import datetime
 import json
 
-from .models import ExamRecord
+from .models import ExamRecord, SystemConfig
 
 
 def admin_dashboard(request):
@@ -19,7 +19,12 @@ def admin_dashboard(request):
     if request.user.username != 'Kgkite':
         return JsonResponse({'error': 'Unauthorized access'}, status=403)
     
-    return render(request, 'admin_dashboard.html')
+    # use singleton config (auto-created if missing)
+    config = SystemConfig.get_solo()
+    live_enabled = config.live_enabled
+
+    # pass the config instance so template can use config.live_enabled
+    return render(request, 'admin_dashboard.html', {'config': config, 'live_enabled': live_enabled})
 
 
 @csrf_exempt
@@ -27,6 +32,16 @@ def admin_dashboard(request):
 def student_login(request):
     """Handle student login with Register Number and Date of Birth."""
     try:
+        config = SystemConfig.objects.first()
+        live_enabled = config.live_enabled if config else False
+
+        if not live_enabled:
+            return JsonResponse({
+                "message": "Exam details will be published soon.",
+                "live": False,
+                "data": []
+            })
+
         data = json.loads(request.body)
         register_no = data.get('register_no', '').strip().upper()
         date_of_birth = data.get('date_of_birth', '')
@@ -56,6 +71,7 @@ def student_login(request):
             # Return student data
             return JsonResponse({
                 'success': True,
+                'live': True,
                 'data': {
                     'record': exam_record.record,
                     'register_no': exam_record.register_no,
@@ -81,6 +97,7 @@ def student_login(request):
             ).first()
             return JsonResponse({
                 'success': True,
+                'live': True,
                 'data': {
                     'record': exam_record.record,
                     'register_no': exam_record.register_no,
@@ -339,3 +356,18 @@ def delete_record(request, record_id):
             'success': False,
             'error': str(e)
         }, status=500)
+
+
+@require_http_methods(["POST"])
+def toggle_live_mode(request):
+    """Toggle system-wide live mode (admin only)."""
+    if not request.user.is_authenticated or request.user.username != 'Kgkite':
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    # toggle the singleton config
+    config = SystemConfig.get_solo()
+    config.live_enabled = not config.live_enabled
+    config.save()
+
+    # redirect back to the dashboard (form posts expect redirect)
+    return redirect('/api/admin/dashboard/')

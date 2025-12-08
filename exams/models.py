@@ -64,3 +64,25 @@ class ExamRecord(models.Model):
 
     def __str__(self):
         return f"{self.register_no} - {self.student_name} - {self.course_code}"
+
+
+class SystemConfig(models.Model):
+    live_enabled = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # enforce a single-row singleton by always using pk=1
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_solo(cls):
+        # returns the singleton instance, creating it if necessary
+        obj, created = cls.objects.get_or_create(pk=1, defaults={'live_enabled': False})
+        return obj
+
+    def __str__(self):
+        return f"Live Mode: {'ON' if self.live_enabled else 'OFF'}"
+
+    class Meta:
+        verbose_name = "System Configuration"
+        verbose_name_plural = "System Configuration"

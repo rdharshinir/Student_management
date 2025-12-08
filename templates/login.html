@@ -292,6 +292,7 @@
 
     hideError('studentError');
     document.getElementById('studentResult').style.display = 'none';
+    document.getElementById('studentSuccess').style.display = 'none';
 
     if (!registerNo || !dateOfBirth) {
       showError('studentError', 'Please fill in all fields');
@@ -312,23 +313,33 @@
 
       const data = await response.json();
 
+      // If system not live yet, backend returns { message, live: false, data: [] }
+      if (data && data.live === false) {
+        hideError('studentError');
+        const successEl = document.getElementById('studentSuccess');
+        successEl.textContent = data.message || 'Exam details will be published soon.';
+        successEl.style.display = 'block';
+        document.getElementById('studentResult').style.display = 'none';
+        return;
+      }
+
       if (data.success) {
         // Hide any previous errors
         hideError('studentError');
-        
+
         // Display success message
         const successEl = document.getElementById('studentSuccess');
         successEl.textContent = '✓ Login successful! Your exam details are shown below.';
         successEl.style.display = 'block';
-        
+
         // Format exam date for better display
         const examDate = new Date(data.data.exam_date);
-        const formattedDate = examDate.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+        const formattedDate = examDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
         });
-        
+
         // Display student data
         document.getElementById('resultRegisterNo').textContent = data.data.register_no;
         document.getElementById('resultStudentName').textContent = data.data.student_name;
@@ -338,10 +349,10 @@
         document.getElementById('resultExamSession').textContent = data.data.exam_session;
         document.getElementById('resultHallNumber').textContent = data.data.exam_hall_number;
         document.getElementById('resultSeatNumber').textContent = data.data.exam_seat_number;
-        
+
         // Show the result section
         document.getElementById('studentResult').style.display = 'block';
-        
+
         // Scroll to result smoothly
         document.getElementById('studentResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } else {

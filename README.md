@@ -116,6 +116,7 @@ The `ExamRecord` model includes the following fields:
 3. Enter credentials:
    - Username: `Kgkite`
    - Password: `Kite@2025`
+   
 4. Access the admin dashboard with full CRUD operations
 
 ## Project Structure

@@ -10,4 +10,5 @@ urlpatterns = [
     path('admin/records/create/', views.create_record, name='create_record'),
     path('admin/records/<int:record_id>/update/', views.update_record, name='update_record'),
     path('admin/records/<int:record_id>/delete/', views.delete_record, name='delete_record'),
+    path('admin/live-toggle/', views.toggle_live_mode, name='toggle_live'),
 ]
