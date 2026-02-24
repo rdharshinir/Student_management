@@ -1,0 +1,85 @@
+[
+    {
+        "model": "exams.systemconfig",
+        "pk": 1,
+        "fields": {
+            "is_live": false,
+            "updated_at": "2026-02-24T00:00:00Z"
+        }
+    },
+    {
+        "model": "exams.examrecord",
+        "pk": 1,
+        "fields": {
+            "register_no": "711722104001",
+            "student_name": "Akshaya R",
+            "course_code": "CS301",
+            "course_title": "Data Structures",
+            "exam_date": "2026-03-10",
+            "exam_session": "FN",
+            "exam_hall_number": "Hall A",
+            "exam_seat_number": "A-01",
+            "date_of_birth": "2004-05-15"
+        }
+    },
+    {
+        "model": "exams.examrecord",
+        "pk": 2,
+        "fields": {
+            "register_no": "711722104002",
+            "student_name": "Rahul Kumar",
+            "course_code": "CS302",
+            "course_title": "Algorithms",
+            "exam_date": "2026-03-11",
+            "exam_session": "AN",
+            "exam_hall_number": "Hall A",
+            "exam_seat_number": "A-02",
+            "date_of_birth": "2004-08-22"
+        }
+    },
+    {
+        "model": "exams.examrecord",
+        "pk": 3,
+        "fields": {
+            "register_no": "711722104003",
+            "student_name": "Sneha Kumari",
+            "course_code": "CS303",
+            "course_title": "Database Management Systems",
+            "exam_date": "2026-03-12",
+            "exam_session": "FN",
+            "exam_hall_number": "Hall B",
+            "exam_seat_number": "B-01",
+            "date_of_birth": "2004-03-10"
+        }
+    },
+    {
+        "model": "exams.examrecord",
+        "pk": 4,
+        "fields": {
+            "register_no": "711722104004",
+            "student_name": "Arun Raj",
+            "course_code": "CS304",
+            "course_title": "Operating Systems",
+            "exam_date": "2026-03-13",
+            "exam_session": "FN",
+            "exam_hall_number": "Hall B",
+            "exam_seat_number": "B-02",
+            "date_of_birth": "2004-01-20"
+        }
+    },
+    {
+        "model": "exams.examrecord",
+        "pk": 5,
+        "fields": {
+            "register_no": "711722104005",
+            "student_name": "Divya Priya",
+            "course_code": "CS305",
+            "course_title": "Computer Networks",
+            "exam_date": "2026-03-14",
+            "exam_session": "AN",
+            "exam_hall_number": "Hall C",
+            "exam_seat_number": "C-01",
+            "date_of_birth": "2004-07-08"
+        }
+    }
+]

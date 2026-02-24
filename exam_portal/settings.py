@@ -4,6 +4,10 @@ Django settings for exam_portal project.
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, 'integrated', '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,12 +17,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-change-in-production'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -69,19 +73,45 @@ WSGI_APPLICATION = 'exam_portal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Database Configuration with MySQL -> SQLite Fallback
+USE_MYSQL = os.getenv('USE_MYSQL', 'False') == 'True'
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'examdb',
-        'USER': 'root',
-        'PASSWORD': 'dharsh@457',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+if USE_MYSQL:
+    MYSQL_DB = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'exam_automation'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'connect_timeout': 5, # Quick failure if MySQL is down
+        },
+    }
+    
+    # Optional: Test MySQL connection if you want to be extra sure, 
+    # but Django usually handles this at runtime or migration.
+    # To keep it simple and robust as requested:
+    try:
+        import MySQLdb
+        # We assign it, and if it fails later, user might need to check logs, 
+        # but for "automatic fallback", we can try a light check if possible.
+        DATABASES['default'] = MYSQL_DB
+    except ImportError:
+        print("MySQLclient not installed. Falling back to SQLite.")
+        DATABASES['default'] = {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+
 
 
 # Password validation

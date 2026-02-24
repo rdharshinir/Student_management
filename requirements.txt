@@ -1,4 +1,6 @@
 Django
 mysqlclient
 django-cors-headers
+python-dotenv
+
 
